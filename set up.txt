@@ -1,0 +1,4 @@
+set up
+
+npm init -y
+npm install express sqlite3 body-parser bcryptjs
