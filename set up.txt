@@ -1,4 +1,7 @@
 set up
 
 npm init -y
-npm install express sqlite3 body-parser bcryptjs
+npm install sqlite3
+node server.js
+
+http://localhost:3000/Register%20Screen.html
