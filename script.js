@@ -1,4 +1,4 @@
-// Buttons, makes sure they exist before adding event listeners
+// Buttons makes sure they exist before adding event listeners
 const RevisaidHome = document.getElementById('RevisaidHome');
 if (RevisaidHome) {
     RevisaidHome.addEventListener('click', function() {
@@ -22,38 +22,51 @@ if (RegisterScreen) {
 
 // Register form
 const RegisterForm = document.getElementById('RegisterForm');
+
 if (RegisterForm) {
     RegisterForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        const InputUsername = document.getElementById('Registerusername').value;
+
+        const InputUsername = document.getElementById('Registerusername').value.trim;
         const InputPassword = document.getElementById('Registerpassword').value;
         const ConfirmPassword = document.getElementById('RegisterConfirm').value;
-        const InputEmail = document.getElementById('RegisterEmail').value;
+        const InputEmail = document.getElementById('RegisterEmail').value.trim;
 
-        if (InputPassword === ConfirmPassword) {
-            fetch('/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username: InputUsername,
-                    password: InputPassword,
-                    email: InputEmail
+        // Password requirements
+        const Count = InputPassword.length;
+        const Capital = /[A-Z]/.test(InputPassword);                        
+        const Number = /\d/.test(InputPassword);
+
+        if (Count >= 8 && Capital && Number) {
+            if (InputPassword === ConfirmPassword) {
+                fetch('/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: InputUsername,
+                        password: InputPassword,
+                        email: InputEmail
+                    })
                 })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Registration successful!');
-                    window.location.href = 'Login Screen.html';
-                } else {
-                    alert('Registration failed.');
-                }
-            });
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Registration successful!');
+                        window.location.href = 'Login Screen.html';
+                    } else {
+                        alert('Registration failed.');
+                    }
+                });
+            } else {
+                alert('Passwords do not match.');
+            }
         } else {
-            alert('Passwords do not match.');
+            alert('Password must be at least 8 characters long, contain a capital letter, and a number.');
         }
     });
 }
+
+
 
 // Login form
 const loginForm = document.getElementById('loginForm');
