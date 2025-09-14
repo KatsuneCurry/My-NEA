@@ -27,10 +27,10 @@ if (RegisterForm) {
     RegisterForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        const InputUsername = document.getElementById('Registerusername').value.trim;
+        const InputUsername = document.getElementById('Registerusername').value.trim();
         const InputPassword = document.getElementById('Registerpassword').value;
         const ConfirmPassword = document.getElementById('RegisterConfirm').value;
-        const InputEmail = document.getElementById('RegisterEmail').value.trim;
+        const InputEmail = document.getElementById('RegisterEmail').value.trim();
 
         // Password requirements
         const Count = InputPassword.length;

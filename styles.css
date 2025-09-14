@@ -56,3 +56,11 @@ input[type="text"]::placeholder, textarea::placeholder {
     width: 300px;
     margin: 0 auto;
 }
+
+#LoginForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 300px;
+    margin: 0 auto;
+}
