@@ -2,6 +2,14 @@ set up
 
 npm init -y
 npm install sqlite3
+npm install bcrypt
 node server.js
 
 http://localhost:3000/Login%20Screen.html
+
+use token based authentication.
+jsonwebtoken
+generate token
+use token to make changes on database
+
+maybe use hashing
