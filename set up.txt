@@ -13,3 +13,6 @@ generate token
 use token to make changes on database
 
 maybe use hashing
+
+https://www.youtube.com/watch?v=mbsmsi7l3r4
+https://github.com/WebDevSimplified/JWT-Authentication/blob/master/.gitignore

@@ -20,6 +20,41 @@ if (RegisterScreen) {
     });
 }
 
+const QuizScreen = document.getElementById('QuizScreen');
+if (QuizScreen) {
+    QuizScreen.addEventListener('click', function() {
+        window.location.href = 'Quiz Screen.html';
+    });
+}
+
+const Flashcards = document.getElementById('Flashcards');
+if (Flashcards) {
+    Flashcards.addEventListener('click', function() {
+        window.location.href = 'Flashcards.html';
+    });
+}
+
+const ClassScreen = document.getElementById('ClassScreen');
+if (ClassScreen) {
+    ClassScreen.addEventListener('click', function() {
+        window.location.href = 'Class Screen.html';
+    });
+}
+
+const AnalyticsScreen = document.getElementById('AnalyticsScreen');
+if (AnalyticsScreen) {
+    AnalyticsScreen.addEventListener('click', function() {
+        window.location.href = 'Analytics Screen.html';
+    });
+}
+
+const SettingsScreen = document.getElementById('SettingsScreen');
+if (SettingsScreen) {
+    SettingsScreen.addEventListener('click', function() {
+        window.location.href = 'Settings Screen.html';
+    });
+}
+
 // Register form
 const RegisterForm = document.getElementById('RegisterForm');
 
