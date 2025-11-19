@@ -14,5 +14,10 @@ use token to make changes on database
 
 maybe use hashing
 
+use login later
+
+create, store and display flashcards
+could potentially create functionality to edit flashcards in the future
+
 https://www.youtube.com/watch?v=mbsmsi7l3r4
 https://github.com/WebDevSimplified/JWT-Authentication/blob/master/.gitignore

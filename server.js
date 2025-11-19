@@ -51,4 +51,67 @@ app.post('/login', (req, res) => {
     });
 });
 
+
+// FLASHCARD DATABASE
+
+const DEMO_ID = 1; // used as a temporary user ID
+
+db.run(`CREATE TABLE IF NOT EXISTS flashcards (
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER,
+    question TEXT NOT NULL,
+    answer TEXT NOT NULL,
+    tag TEXT
+)`);
+
+// CREATE FLASHCARD
+app.post('/flashcards', (req,res) => {
+    const userId = DEMO_ID;
+    const { question, answer, tag} = req.body;
+
+    db.run(
+        `INSERT INTO flashcards (user_id, question, answer, tag)
+        VALUES (?,?,?,?)`,
+        [userId, question, answer, tag],
+        function(err) {
+            if (err) {
+                onsole.error(err);
+                return res.json({success: false});
+            }
+            res.json({
+                success: true,
+                id: this.lastID
+            });
+
+        }
+    );
+});
+
+// DELETE FLASHCARD
+
+app.delete('/flashcards/:id', (req, res) => {
+    const userId = DEMO_ID;
+    const cardId = req.params.id;
+
+    db.run(
+        `DELETE FROM flashcards
+        WHERE id = ? and user_id = ?`,
+        [cardId, userID],
+        function (err) {
+            if (err){
+                console.error(err);
+                return res.json({success: false});
+            }
+            if (this.changes === 0) {
+                return res,json({success: false, message: 'no card deleted'});
+            }
+            res.json({success: true});
+        }
+    );
+});
+
+
+
+
+
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));
