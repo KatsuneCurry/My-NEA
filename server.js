@@ -75,7 +75,7 @@ app.post('/flashcards', (req,res) => {
         [userId, question, answer, tag],
         function(err) {
             if (err) {
-                onsole.error(err);
+                console.error(err);
                 return res.json({success: false});
             }
             res.json({
