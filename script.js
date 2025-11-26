@@ -127,3 +127,25 @@ if (loginForm) {
         });
     });
 }
+
+
+// Creating the flashcard
+const form = document.getElementById('flashcard_form')
+
+form.addEventListener('submit', (e) => {e.preventDefault();
+    const question = document.getElementById('card_question').value;
+    const answer = document.getElementById('card_answer').value;
+    const tag = document.getElementById('card_tag').value;
+    
+    fetch('/flashcards', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({question, answer, tag})
+    })
+    .then (res=> res.json())
+    .then(data => {
+        console.log("flashcard saved: ", data);
+        form.reset();
+        alert("flashcard created")
+    });
+});
