@@ -21,5 +21,7 @@ could potentially create functionality to edit flashcards in the future
 
 put email forgotten password in the furute
 
+find a way to display flashcards purely based on tags.
+
 https://www.youtube.com/watch?v=mbsmsi7l3r4
 https://github.com/WebDevSimplified/JWT-Authentication/blob/master/.gitignore

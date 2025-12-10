@@ -110,7 +110,28 @@ app.delete('/flashcards/:id', (req, res) => {
     );
 });
 
+//Read Flashcard
 
+app.get('/flashcards/:id'),(req,res) => {
+
+    db.all(
+        `SELECT id, question, answer, tag FROM flashcards`,
+        [],
+        (err,rows) => {
+            if (err) {
+                console.error(err);
+                return res.json({success: false});
+            }
+        }
+
+    )
+}
+
+//Read flashcard. Get via select, return all flashcards                                         where userid matches logged in user.
+
+//Learn how to render with JS and HTML, using a loop e.g. for each element <p> index count </p>
+
+//Use the returned data from the API (DATABASE) and render with that data in the loop instead
 
 
 
