@@ -130,8 +130,9 @@ if (loginForm) {
 
 
 // Creating the flashcard
-const form = document.getElementById('flashcard_form')
+const form = document.getElementById('flashcard_form');
 
+if (form) {
 form.addEventListener('submit', (e) => {e.preventDefault();
     const question = document.getElementById('card_question').value;
     const answer = document.getElementById('card_answer').value;
@@ -146,6 +147,7 @@ form.addEventListener('submit', (e) => {e.preventDefault();
     .then(data => {
         console.log("flashcard saved: ", data);
         form.reset();
-        alert("flashcard created")
+        alert("flashcard created");
     });
 });
+}
