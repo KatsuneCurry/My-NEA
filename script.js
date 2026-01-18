@@ -2,56 +2,56 @@
 const RevisaidHome = document.getElementById('RevisaidHome');
 if (RevisaidHome) {
     RevisaidHome.addEventListener('click', function() {
-        window.location.href = 'Home Screen.html';
+        window.location.href = '/Screens/Home Screen.html';
     });
 }
 
 const LoginScreen = document.getElementById('LoginScreen');
 if (LoginScreen) {
     LoginScreen.addEventListener('click', function() {
-        window.location.href = 'Login Screen.html';
+        window.location.href = '/Screens/Login Screen.html';
     });
 }
 
 const RegisterScreen = document.getElementById('RegisterScreen');
 if (RegisterScreen) {
     RegisterScreen.addEventListener('click', function() {
-        window.location.href = 'Register Screen.html';
+        window.location.href = '/Screens/Register Screen.html';
     });
 }
 
 const QuizScreen = document.getElementById('QuizScreen');
 if (QuizScreen) {
     QuizScreen.addEventListener('click', function() {
-        window.location.href = 'Quiz Screen.html';
+        window.location.href = '/Screens/Quiz Screen.html';
     });
 }
 
 const Flashcards = document.getElementById('Flashcards');
 if (Flashcards) {
     Flashcards.addEventListener('click', function() {
-        window.location.href = 'Flashcards.html';
+        window.location.href = '/Screens/Flashcards.html';
     });
 }
 
 const ClassScreen = document.getElementById('ClassScreen');
 if (ClassScreen) {
     ClassScreen.addEventListener('click', function() {
-        window.location.href = 'Class Screen.html';
+        window.location.href = '/Screens/Class Screen.html';
     });
 }
 
 const AnalyticsScreen = document.getElementById('AnalyticsScreen');
 if (AnalyticsScreen) {
     AnalyticsScreen.addEventListener('click', function() {
-        window.location.href = 'Analytics Screen.html';
+        window.location.href = '/Screens/Analytics Screen.html';
     });
 }
 
 const SettingsScreen = document.getElementById('SettingsScreen');
 if (SettingsScreen) {
     SettingsScreen.addEventListener('click', function() {
-        window.location.href = 'Settings Screen.html';
+        window.location.href = '/Screens/Settings Screen.html';
     });
 }
 
@@ -87,7 +87,7 @@ if (RegisterForm) {
                 .then(data => {
                     if (data.success) {
                         alert('Registration successful!');
-                        window.location.href = 'Login Screen.html';
+                        window.location.href = '/Screens/Login Screen.html';
                     } else {
                         alert('Registration failed.');
                     }
@@ -120,7 +120,7 @@ if (loginForm) {
         .then(data => {
             if (data.success) {
                 alert('Login successful!');
-                window.location.href = 'Home Screen.html';
+                window.location.href = '/Screens/Home Screen.html';
             } else {
                 alert('Invalid credentials.');
             }
@@ -148,6 +148,10 @@ form.addEventListener('submit', (e) => {e.preventDefault();
         console.log("flashcard saved: ", data);
         form.reset();
         alert("flashcard created");
+    })
+    .catch(err => {
+        console.error("Error creating flashcard:", err);
+        alert("Failed to create flashcard");
     });
 });
 }
