@@ -1,13 +1,12 @@
 @echo off
 cd /d "%~dp0"
-echo Checking dependencies...
+echo Checking dependencies
 if not exist "node_modules" (
-    echo Installing dependencies...
+    echo Installing dependencies
     call npm install
-    echo.
 )
-echo Starting server...
-echo.
+echo Starting server
 node server.js
 pause
+
 
