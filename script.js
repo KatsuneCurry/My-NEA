@@ -16,7 +16,7 @@ if (LoginScreen) {
 const RegisterScreen = document.getElementById('RegisterScreen');
 if (RegisterScreen) {
     RegisterScreen.addEventListener('click', function() {
-        window.location.href = '/Screens/Register Screen.html';
+        window.location.href = '/Screens/Register%20Screen.html';
     });
 }
 
@@ -83,14 +83,23 @@ if (RegisterForm) {
                         email: InputEmail
                     })
                 })
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error('Server error');
+                    }
+                    return res.json();
+                })
                 .then(data => {
                     if (data.success) {
                         alert('Registration successful!');
                         window.location.href = '/Screens/Login Screen.html';
                     } else {
-                        alert('Registration failed.');
+                        alert('Registration failed: ' + (data.message || 'Username or email already exists.'));
                     }
+                })
+                .catch(err => {
+                    console.error('Registration error:', err);
+                    alert('Registration failed: Network error. Please try again.');
                 });
             } else {
                 alert('Passwords do not match.');

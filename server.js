@@ -9,6 +9,11 @@ const app = express();
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
 
+// Redirect to login screen when website is first accessed
+app.get('/', (req, res) => {
+    res.redirect('/Screens/Login Screen.html');
+});
+
 // SINGLE DATABASE
 const db = new sqlite3.Database('./test.db');
 
