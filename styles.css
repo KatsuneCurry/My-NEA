@@ -25,6 +25,27 @@ button:hover {
     background-color: #005fa3;
 }
 
+.flashcard-item {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 10px 0;
+    max-width: 520px;
+}
+
+.flashcard-item > div {
+    margin: 6px 0;
+}
+
+.flashcard-item button {
+    margin-top: 8px;
+    background-color: #d83b01;
+}
+
+.flashcard-item button:hover {
+    background-color: #a52c00;
+}
+
 
 input[type="text"], input[type="email"], input[type="password"], textarea {
     border: 2px solid #4CAF50;

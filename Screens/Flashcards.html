@@ -13,12 +13,16 @@
     <form id="flashcard_form">
         <input id="card_question" placeholder="Question (front)" required>
         <input id="card_answer" placeholder="answer (back)" required>
-        <input id="card_tag" placeholder="tag (optional)">
+        <input id="card_tag" placeholder="tag (required)">
         <button type="submit">Create Card</button>
     </form>
 
+    <button id="load_flashcards" type="button">Load Flashcards</button>
+
+
+
     <h3>here is a list of currently stored flashcards.</h3>
-    <div id="flashcard_list"></div>
+    <ul id="flashcard_list"></ul>
 
     <script src="../script.js"></script>
 

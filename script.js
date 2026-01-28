@@ -16,7 +16,7 @@ if (LoginScreen) {
 const RegisterScreen = document.getElementById('RegisterScreen');
 if (RegisterScreen) {
     RegisterScreen.addEventListener('click', function() {
-        window.location.href = '/Screens/Register%20Screen.html';
+        window.location.href = '/Screens/Register Screen.html';
     });
 }
 
@@ -164,3 +164,17 @@ form.addEventListener('submit', (e) => {e.preventDefault();
     });
 });
 }
+
+function loadFlashcards() {
+    fetch('/flashcards')
+    .then((res) => res.json())
+    .then((data) => {
+        let output = '';
+        data.forEach(function(flashcard) {
+            output += `<li>${flashcard.question} | ${flashcard.answer} | ${flashcard.tag}</li>`;
+        });
+        document.getElementById('flashcard_list').innerHTML = output;
+    });
+}
+
+document.getElementById('load_flashcards').addEventListener('click', loadFlashcards);
