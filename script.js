@@ -165,16 +165,42 @@ form.addEventListener('submit', (e) => {e.preventDefault();
 });
 }
 
-function loadFlashcards() {
+// Loading flashcards
+function load_flashcards() {
+    const list = document.getElementById('flashcard_list');
+    if (!list) return;
+
+    list.innerHTML = '<li>Loading flashcards...</li>';
+
     fetch('/flashcards')
-    .then((res) => res.json())
-    .then((data) => {
-        let output = '';
-        data.forEach(function(flashcard) {
-            output += `<li>${flashcard.question} | ${flashcard.answer} | ${flashcard.tag}</li>`;
+        .then(res => res.json())
+        .then(data => {
+            if (!data || !data.success) {
+                throw new Error('Failed to load flashcards');
+            }
+
+            const cards = data.flashcards;
+            if (!Array.isArray(cards) || cards.length === 0) {
+                list.innerHTML = '<li>No flashcards found.</li>';
+                return;
+            }
+
+            list.innerHTML = cards
+                .map(card => {
+                    const q = String(card?.question ?? '');
+                    const a = String(card?.answer ?? '');
+                    const t = String(card?.tag ?? '-');
+                    return `<li>${q} | ${a} | ${t}</li>`;
+                })
+                .join('');
+        })
+        .catch(err => {
+            console.error(err);
+            list.innerHTML = '<li>Error loading flashcards.</li>';
         });
-        document.getElementById('flashcard_list').innerHTML = output;
-    });
 }
 
-document.getElementById('load_flashcards').addEventListener('click', loadFlashcards);
+const loadcards = document.getElementById('load_flashcards');
+if (loadcards) {
+    loadcards.addEventListener('click', load_flashcards);
+}
