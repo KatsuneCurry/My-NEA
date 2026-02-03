@@ -54,13 +54,13 @@ app.post('/login', (req, res) => {
             if (err || !result) {
                 return res.json({ success: false });
             }
-            return res.json({ success: true });
+            return res.json({ success: true, userId: row.id });
         });
     });
 });
 
 // FLASHCARDS
-const DEMO_ID = 1; // temporary user id
+
 
 db.run(`CREATE TABLE IF NOT EXISTS flashcards (
     id INTEGER PRIMARY KEY,
@@ -70,9 +70,16 @@ db.run(`CREATE TABLE IF NOT EXISTS flashcards (
     tag TEXT
 )`);
 
+
+
 // CREATE FLASHCARD
 app.post('/flashcards', (req, res) => {
-    const userId = DEMO_ID;
+
+    const userId = parseInt(req.body.userId, 10);
+    if (!userId) {
+        return res.json({ success: false, message: 'Invalid user ID' });
+    } 
+
     const { question, answer, tag } = req.body;
 
     db.run(
@@ -94,7 +101,12 @@ app.post('/flashcards', (req, res) => {
 
 // DELETE FLASHCARD
 app.delete('/flashcards/:id', (req, res) => {
-    const userId = DEMO_ID;
+    
+    const userId = parseInt(req.query.userId, 10);
+    if (!userId) {
+        return res.json({ success: false, message: 'Invalid user ID' });
+    } 
+
     const cardId = req.params.id;
 
     db.run(
@@ -115,7 +127,11 @@ app.delete('/flashcards/:id', (req, res) => {
 
 // READ FLASHCARDS
 app.get('/flashcards', (req, res) => {
-    const userId = DEMO_ID;
+
+    const userId = parseInt(req.query.userId, 10);
+    if (!userId) {
+        return res.json({ success: false, message: 'Invalid user ID' });
+    } 
 
     db.all(
         `SELECT id, question, answer, tag FROM flashcards WHERE user_id = ?`,

@@ -55,6 +55,17 @@ if (SettingsScreen) {
     });
 }
 
+
+//Ensure user is logged in
+function ensureLoggedin() {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        alert('You must be logged in to access this page.');
+        window.location.href = '/Screens/Login Screen.html';
+    }
+}
+
+
 // Register form
 const RegisterForm = document.getElementById('RegisterForm');
 
@@ -128,6 +139,8 @@ if (loginForm) {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
+                const userId = data.userId;
+                localStorage.setItem('userId', userId);
                 alert('Login successful!');
                 window.location.href = '/Screens/Home Screen.html';
             } else {
@@ -147,10 +160,12 @@ form.addEventListener('submit', (e) => {e.preventDefault();
     const answer = document.getElementById('card_answer').value;
     const tag = document.getElementById('card_tag').value;
     
+    const userId = localStorage.getItem('userId');
+
     fetch('/flashcards', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({question, answer, tag})
+        body: JSON.stringify({question, answer, tag, userId})
     })
     .then (res=> res.json())
     .then(data => {
@@ -172,7 +187,8 @@ function load_flashcards() {
 
     list.innerHTML = '<li>Loading flashcards...</li>';
 
-    fetch('/flashcards')
+    const userId = localStorage.getItem('userId');
+    fetch(`/flashcards?userId=${encodeURIComponent(userId)}`)
         .then(res => res.json())
         .then(data => {
             if (!data || !data.success) {
