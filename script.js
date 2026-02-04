@@ -283,7 +283,7 @@ function QuizTagSelect() {
             }
 
             localStorage.setItem('quizTags', JSON.stringify(selected));
-            alert('Tags saved. Next step: build quiz questions.');
+            alert('Tags saved.');
         });
     }
 }
