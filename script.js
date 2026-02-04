@@ -220,3 +220,70 @@ const loadcards = document.getElementById('load_flashcards');
 if (loadcards) {
     loadcards.addEventListener('click', load_flashcards);
 }
+
+//tag selection for quiz
+function QuizTagSelect() {
+    const taglist = document.getElementById('TagList');
+    if (!taglist) return;
+
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        taglist.textContent = 'Please log in first.';
+        return;
+    }
+
+    //gets tags
+    fetch(`/flashcards?userId=${encodeURIComponent(userId)}`)
+        .then(res => res.json())
+        .then(data => {
+            if (!data || !data.success) {
+                throw new Error('Failed to load flashcards');
+            }
+
+            const tags = Array.from(
+                new Set(
+                    data.flashcards
+                        .map(card => String(card.tag || '').trim())
+                        .filter(tag => tag.length > 0)
+                )
+            );
+
+            if (tags.length === 0) {
+                taglist.textContent = 'No tags found. Add tags to flashcards first.';
+                return;
+            }
+
+            taglist.innerHTML = tags
+                .map(tag => {
+                    const safeTag = tag.replace(/"/g, '&quot;');
+                    return `
+                        <label>
+                            <input type="checkbox" name="quiz_tags" value="${safeTag}">
+                            ${tag}
+                        </label><br>
+                    `;
+                })
+                .join('');
+        })
+        .catch(err => {
+            console.error(err);
+            taglist.textContent = 'Error loading tags.';
+        });
+
+    const startBtn = document.getElementById('StartQuiz');
+    if (startBtn) {
+        startBtn.addEventListener('click', () => {
+            const selected = Array.from(
+                document.querySelectorAll('input[name="quiz_tags"]:checked')
+            ).map(input => input.value);
+
+            if (selected.length === 0) {
+                alert('Please select at least one tag.');
+                return;
+            }
+
+            localStorage.setItem('quizTags', JSON.stringify(selected));
+            alert('Tags saved. Next step: build quiz questions.');
+        });
+    }
+}
