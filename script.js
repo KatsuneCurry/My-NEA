@@ -287,3 +287,15 @@ function QuizTagSelect() {
         });
     }
 }
+
+
+//logout
+function logout() {
+    localStorage.clear();
+    window.location.href = '/Screens/Login Screen.html';
+} 
+
+const logoutButton = document.getElementById('logout');
+if (logoutButton) {
+    logoutButton.addEventListener('click', logout);
+}
