@@ -180,10 +180,23 @@ form.addEventListener('submit', (e) => {e.preventDefault();
 });
 }
 
+function getTags(tagListId = 'TagList') {
+    const taglist = document.getElementById(tagListId);
+    if (!taglist) return [];
+
+    return Array.from(taglist.querySelectorAll('input[name="quiz_tags"]:checked'))
+        .map(input => input.value);
+}
+
 // Loading flashcards
-function load_flashcards() {
+function load_flashcards(selectedTags) {
     const list = document.getElementById('flashcard_list');
     if (!list) return;
+
+    if (!Array.isArray(selectedTags) || selectedTags.length === 0) {
+        alert('Please select at least one tag.');
+        return;
+    }
 
     list.innerHTML = '<li>Loading flashcards...</li>';
 
@@ -195,14 +208,14 @@ function load_flashcards() {
                 throw new Error('Failed to load flashcards');
             }
 
-            const cards = data.flashcards;
-            if (!Array.isArray(cards) || cards.length === 0) {
+            const cards = data.flashcards.filter(card => selectedTags.includes(String(card.tag || '').trim()));
+
+            if (cards.length === 0) {
                 list.innerHTML = '<li>No flashcards found.</li>';
                 return;
             }
 
-            list.innerHTML = cards
-                .map(card => {
+            list.innerHTML = cards.map(card => {
                     const q = String(card?.question ?? '');
                     const a = String(card?.answer ?? '');
                     const t = String(card?.tag ?? '-');
@@ -218,12 +231,15 @@ function load_flashcards() {
 
 const loadcards = document.getElementById('load_flashcards');
 if (loadcards) {
-    loadcards.addEventListener('click', load_flashcards);
+    loadcards.addEventListener('click', () => {
+        const SelectedTags = getTags('TagList');
+        load_flashcards(SelectedTags);
+    });
 }
 
 //tag selection for quiz
-function QuizTagSelect() {
-    const taglist = document.getElementById('TagList');
+function QuizTagSelect(tagListId = 'TagList') {
+    const taglist = document.getElementById(tagListId);
     if (!taglist) return;
 
     const userId = localStorage.getItem('userId');
@@ -288,6 +304,37 @@ function QuizTagSelect() {
     }
 }
 
+// Unhide flashcards menus
+function unhideFlashcardMenus(sectionId) {
+    const sections = ['CreateFlashcards', 'ViewFlashcards', 'ManageFlashcards'];
+    sections.forEach(id => {
+        const section = document.getElementById(id);
+        if (section) {section.hidden = (id !== sectionId);
+        }
+    });
+    if (sectionId === 'ViewFlashcards') {
+        QuizTagSelect('TagList');
+    }
+
+    if (sectionId === 'ManageFlashcards') {
+        QuizTagSelect('ManageTagList');
+    }
+}
+
+const flashcardMenu = document.getElementById('flashcardMenu');
+if (flashcardMenu) {flashcardMenu.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-section]');
+    if (!button) return;
+
+    if (button.dataset.section ==='create') {
+        unhideFlashcardMenus('CreateFlashcards');
+    } else if (button.dataset.section === 'view') {
+        unhideFlashcardMenus('ViewFlashcards');
+    } else if (button.dataset.section === 'manage') {
+        unhideFlashcardMenus('ManageFlashcards');
+    }
+});
+}
 
 //logout
 function logout() {

@@ -9,20 +9,36 @@
     <button id="RevisaidHome">Revisaid</button>
     <h1>Flashcards Screen</h1>
 
-    <h2> Create Flashcards</h2>
-    <form id="flashcard_form">
-        <input id="card_question" placeholder="Question (front)" required>
-        <input id="card_answer" placeholder="answer (back)" required>
-        <input id="card_tag" placeholder="tag (required)">
-        <button type="submit">Create Card</button>
-    </form>
+    <div id="flashcardMenu">
+        <button type ="button" data-section="create">Create Flashcard</button>
+        <button type ="button" data-section="view">View Flashcards</button>
+        <button type ="button" data-section="manage">Manage Flashcards</button>
+    </div>
 
-    <button id="load_flashcards" type="button">Load Flashcards</button>
+    <section id="CreateFlashcards" hidden>
+        <h2> Create Flashcards</h2>
+     <form id="flashcard_form">
+         <input id="card_question" placeholder="Question (front)" required>
+         <input id="card_answer" placeholder="answer (back)" required>
+            <input id="card_tag" placeholder="tag (required)">
+         <button type="submit">Create Card</button>
+      </form>
+    </section>
 
+    <section id="ViewFlashcards" hidden>
+        <h2> View Flashcards</h2>
 
+        <div id="TagList"></div>
+        <button id="load_flashcards" type="button">Load Flashcards</button>
 
-    <h3>here is a list of currently stored flashcards.</h3>
-    <ul id="flashcard_list"></ul>
+        <ul id="flashcard_list"></ul>
+    </section>
+
+    <section id="ManageFlashcards" hidden>
+        <h2> Manage Flashcards</h2>
+        <div id="ManageTagList"></div>
+
+    </section>
 
     <script src="../script.js"></script>
     <script>
