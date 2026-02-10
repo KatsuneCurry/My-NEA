@@ -286,9 +286,9 @@ function QuizTagSelect(tagListId = 'TagList') {
             taglist.textContent = 'Error loading tags.';
         });
 
-    const startBtn = document.getElementById('StartQuiz');
-    if (startBtn) {
-        startBtn.addEventListener('click', () => {
+    const confirmTagsBtn = document.getElementById('ConfirmTags');
+    if (confirmTagsBtn) {
+        confirmTagsBtn.addEventListener('click', () => {
             const selected = Array.from(
                 document.querySelectorAll('input[name="quiz_tags"]:checked')
             ).map(input => input.value);
@@ -336,11 +336,166 @@ if (flashcardMenu) {flashcardMenu.addEventListener('click', (event) => {
 });
 }
 
+//delete flashcards
+function manageLoadFlashcards(selectedTags) {
+    const list = document.getElementById('manage_flashcard_list');
+    if (!list) return;
+
+    if (!Array.isArray(selectedTags) || selectedTags.length === 0) {
+        alert('Please select at least one tag.');
+        return;
+    }
+
+    list.innerHTML = '<li>Loading flashcards...</li>';
+    const userId = localStorage.getItem('userId');
+    fetch(`/flashcards?userId=${encodeURIComponent(userId)}`)
+    .then(res => res.json())
+    .then(data => {
+        if (!data || !data.success) {
+            throw new Error('Failed to load Flashcards');
+        }
+
+        const cards = data.flashcards.filter(card => selectedTags.includes(String(card.tag || '').trim()));
+        if (cards.length === 0) {
+        list.innerHTML = '<li>No flashcards found.</li>';
+        return;
+        }
+
+        list.innerHTML = cards.map(card => {
+            const q = String(card?.question ?? '');
+            const a = String(card?.answer ?? '');
+            const t = String(card?.tag ?? '-');
+            return ` <li data-id="${card.id}">${q} | ${a} | ${t} <button type="button" class="delete-btn">Delete</button></li>`;
+        }).join('');
+    })
+    .catch(err => {
+        console.error(err);
+        list.innerHTML = '<li>Error loading flashcards.</li>';
+    });
+}
+
+const LoadFlashcardsDelete = document.getElementById('LoadManageFlashcards');
+if (LoadFlashcardsDelete) {
+    LoadFlashcardsDelete.addEventListener('click', () => {
+        const selectedTags = getTags('ManageTagList');
+        manageLoadFlashcards(selectedTags);
+    });
+}
+
+const manageFlashcardList = document.getElementById('manage_flashcard_list');
+if (manageFlashcardList) {
+    manageFlashcardList.addEventListener('click', (e) => {
+        const button = e.target.closest('.delete-btn');
+        if (!button) return;
+
+        const li = button.closest('li[data-id]');
+        if (!li) return;
+
+        const cardId = li.getAttribute('data-id');
+        const userId = localStorage.getItem('userId');
+
+        fetch(`/flashcards/${encodeURIComponent(cardId)}?userId=${encodeURIComponent(userId)}`,{method: 'DELETE'})
+        .then(res => res.json())
+        .then(data => {
+            if (!data || !data.success) {
+                alert('Failed to delete flashcard.');
+                return;
+            }
+
+            li.remove();
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Error deleting flashcard.');
+        });
+    });
+}
+
+
+// Flashcard Quiz display
+let quizCards = [];
+let quizIndex = 0;
+let showingQuestion = true;
+
+function displayQuizCard() {
+    const area = document.getElementById('FlashcardArea');
+    const card = document.getElementById('FlashcardFace');
+    const progress = document.getElementById('QuizProgress');
+
+    if (!area || !card || !progress) return;
+
+    if (quizIndex >= quizCards.length) {
+        card.textContent = 'No remaining flashcards';
+        progress.textContent = '';
+        return;
+    }
+
+    const current = quizCards[quizIndex];
+    showingQuestion = true;
+    card.textContent = current.question;
+    progress.textContent = `Card ${quizIndex + 1} of ${quizCards.length}`;
+    area.hidden = false;
+
+}
+
+const startQuizBtn = document.getElementById('startQuiz');
+if (startQuizBtn) {
+    startQuizBtn.addEventListener('click', () => {
+        const storedtags = localStorage.getItem('quizTags');
+        const selectedTags = storedtags ? JSON.parse(storedtags) : [];
+        
+        if (!Array.isArray(selectedTags) || selectedTags.length === 0) {
+            alert('Please Confirm Tags before Starting Quiz')
+            return;
+        }
+
+        const userId = localStorage.getItem('userId');
+        fetch(`/flashcards?userId=${encodeURIComponent(userId)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (!data || !data.success) {
+                    throw new Error('Failed to load flashcards');
+               }
+
+                quizCards = data.flashcards.filter(card => selectedTags.includes(String(card.tag || '').trim()));
+                if (quizCards.length === 0) {
+                   alert('No flashcards found for selected tags.');
+                   return;
+               }
+
+               quizCards = shuffle(quizCards);
+               quizIndex = 0;
+               displayQuizCard();
+           })
+           .catch(err => {
+               console.error(err);
+            alert('Error loading flashcards.');
+        });
+    });
+}
+
+const flipFlashcard = document.getElementById('flipFlashcard');
+if (flipFlashcard) {
+    flipFlashcard.addEventListener('click', () => {
+        if(quizIndex >= quizCards.length) return;
+        const card = document.getElementById('FlashcardFace');
+        const currentCard = quizCards[quizIndex];
+
+        if (showingQuestion) {
+            card.textContent = currentCard.answer;
+            showingQuestion = false;
+        } else {
+            card.textContent = currentCard.question;
+            showingQuestion = true;
+        }
+    });
+}
+
 //logout
 function logout() {
     localStorage.clear();
     window.location.href = '/Screens/Login Screen.html';
-} 
+}
 
 const logoutButton = document.getElementById('logout');
 if (logoutButton) {

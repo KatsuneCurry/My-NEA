@@ -11,8 +11,16 @@
     
     <h2>Select Tags to Begin Quizzing</h2>
     <div id="TagList">Loading tags</div>
+    <button id="ConfirmTags">Confirm Tags</button>
     <button id="StartQuiz">Start Quiz</button>
-    
+
+    <div id="FlashcardArea" hidden>
+        <p id="QuizProgress"></p>
+        <div id="FlashcardFace"></div>
+        <button id="FlipCard">Flip Card</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="../script.js"></script>
     <script>
       ensureLoggedin();
