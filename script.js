@@ -438,7 +438,7 @@ function displayQuizCard() {
 
 }
 
-const startQuizBtn = document.getElementById('startQuiz');
+const startQuizBtn = document.getElementById('StartQuiz');
 if (startQuizBtn) {
     startQuizBtn.addEventListener('click', () => {
         const storedtags = localStorage.getItem('quizTags');
@@ -463,7 +463,7 @@ if (startQuizBtn) {
                    return;
                }
 
-               quizCards = shuffle(quizCards);
+               quizCards = _.shuffle(quizCards);
                quizIndex = 0;
                displayQuizCard();
            })
@@ -474,7 +474,7 @@ if (startQuizBtn) {
     });
 }
 
-const flipFlashcard = document.getElementById('flipFlashcard');
+const flipFlashcard = document.getElementById('FlipCard');
 if (flipFlashcard) {
     flipFlashcard.addEventListener('click', () => {
         if(quizIndex >= quizCards.length) return;
