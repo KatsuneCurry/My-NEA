@@ -441,13 +441,14 @@ function displayQuizCard() {
 const startQuizBtn = document.getElementById('StartQuiz');
 if (startQuizBtn) {
     startQuizBtn.addEventListener('click', () => {
-        const storedtags = localStorage.getItem('quizTags');
-        const selectedTags = storedtags ? JSON.parse(storedtags) : [];
-        
+        const selectedTags = getTags('TagList');
+
         if (!Array.isArray(selectedTags) || selectedTags.length === 0) {
-            alert('Please Confirm Tags before Starting Quiz')
+            alert('Please Select Tags before Starting Quiz');
             return;
         }
+
+        localStorage.setItem('quizTags', JSON.stringify(selectedTags));
 
         const userId = localStorage.getItem('userId');
         fetch(`/flashcards?userId=${encodeURIComponent(userId)}`)
