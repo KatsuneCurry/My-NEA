@@ -421,12 +421,17 @@ function displayQuizCard() {
     const area = document.getElementById('FlashcardArea');
     const card = document.getElementById('FlashcardFace');
     const progress = document.getElementById('QuizProgress');
+    const InputAnswer = document.getElementById('QuizAnswer')
 
     if (!area || !card || !progress) return;
 
     if (quizIndex >= quizCards.length) {
         card.textContent = 'No remaining flashcards';
         progress.textContent = '';
+        if (InputAnswer) {
+            InputAnswer.value = '';
+            InputAnswer.disabled = true;
+        }
         return;
     }
 
@@ -435,6 +440,11 @@ function displayQuizCard() {
     card.textContent = current.question;
     progress.textContent = `Card ${quizIndex + 1} of ${quizCards.length}`;
     area.hidden = false;
+
+    if (InputAnswer) {
+        InputAnswer.value = '';
+        InputAnswer.disabled = false;
+    }
 
 }
 
@@ -464,7 +474,9 @@ if (startQuizBtn) {
                    return;
                }
 
-               quizCards = _.shuffle(quizCards);
+               const tagselectionsection = document.getElementById('TagSelectionSection');
+                    if (tagselectionsection) {tagselectionsection.hidden = true;}
+
                quizIndex = 0;
                displayQuizCard();
            })
@@ -481,15 +493,27 @@ if (flipFlashcard) {
         if(quizIndex >= quizCards.length) return;
         const card = document.getElementById('FlashcardFace');
         const currentCard = quizCards[quizIndex];
+        const InputAnswer = document.getElementById('QuizAnswer')
 
         if (showingQuestion) {
             card.textContent = currentCard.answer;
             showingQuestion = false;
+            if (InputAnswer) {
+                InputAnswer.disabled = true;
+            }
         } else {
             card.textContent = currentCard.question;
             showingQuestion = true;
         }
     });
+}
+
+const nextCard = document.getElementById('Next_Flashcard');
+if (nextCard) {
+    nextCard.addEventListener('click', () => {
+        quizIndex = quizIndex + 1
+        displayQuizCard()
+    })
 }
 
 //logout
