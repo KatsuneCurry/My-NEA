@@ -421,7 +421,8 @@ function displayQuizCard() {
     const area = document.getElementById('FlashcardArea');
     const card = document.getElementById('FlashcardFace');
     const progress = document.getElementById('QuizProgress');
-    const InputAnswer = document.getElementById('QuizAnswer')
+    const InputAnswer = document.getElementById('QuizAnswer');
+    const nextCardBtn = document.getElementById('Next_Flashcard')
 
     if (!area || !card || !progress) return;
 
@@ -431,6 +432,9 @@ function displayQuizCard() {
         if (InputAnswer) {
             InputAnswer.value = '';
             InputAnswer.disabled = true;
+        }
+        if (nextCardBtn) {
+            nextCardBtn.hidden = true;
         }
         return;
     }
@@ -443,6 +447,9 @@ function displayQuizCard() {
 
     if (InputAnswer) {
         InputAnswer.value = '';
+        if (nextCardBtn) {
+            nextCardBtn.hidden = true;
+        }
         InputAnswer.disabled = false;
     }
 
@@ -488,6 +495,7 @@ if (startQuizBtn) {
 }
 
 const flipFlashcard = document.getElementById('FlipCard');
+const nextCardBtn = document.getElementById('Next_Flashcard')
 if (flipFlashcard) {
     flipFlashcard.addEventListener('click', () => {
         if(quizIndex >= quizCards.length) return;
@@ -500,6 +508,9 @@ if (flipFlashcard) {
             showingQuestion = false;
             if (InputAnswer) {
                 InputAnswer.disabled = true;
+            }
+            if (nextCardBtn) {
+                nextCardBtn.hidden = false;
             }
         } else {
             card.textContent = currentCard.question;

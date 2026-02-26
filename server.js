@@ -25,6 +25,15 @@ db.run(`CREATE TABLE IF NOT EXISTS users (
     email TEXT UNIQUE
 )`);
 
+// ATTEMPT TABLE
+db.run(`CREATE TABLE IF NOT EXISTS quiz_attempts(
+    id INTEGER PRIMARY KEY,
+    user_id INTERGER NOT NULL,
+    flashcard_id INTEGER NOT NULL,
+    tag TEXT NOT NULL,
+    correct BOOLEAN NOT NULL
+    created TEXT DEFAULT CURRENT_TIMESTAMP)`);
+
 // Registration
 app.post('/register', (req, res) => {
     const { username, password, email } = req.body;
