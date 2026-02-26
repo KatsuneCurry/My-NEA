@@ -25,13 +25,13 @@ db.run(`CREATE TABLE IF NOT EXISTS users (
     email TEXT UNIQUE
 )`);
 
-// ATTEMPT TABLE
+// ATTEMPTS TABLE
 db.run(`CREATE TABLE IF NOT EXISTS quiz_attempts(
     id INTEGER PRIMARY KEY,
-    user_id INTERGER NOT NULL,
+    user_id INTEGER NOT NULL,
     flashcard_id INTEGER NOT NULL,
     tag TEXT NOT NULL,
-    correct BOOLEAN NOT NULL
+    correct BOOLEAN NOT NULL,
     created TEXT DEFAULT CURRENT_TIMESTAMP)`);
 
 // Registration
@@ -153,6 +153,50 @@ app.get('/flashcards', (req, res) => {
             res.json({ success: true, flashcards: rows });
         }
     );
+});
+
+//Record attempt
+app.post('/quiz_attempts',(req,res) => {
+    const userId = parseInt(req.body.userId, 10);
+    const flashcardId = parseInt(req.body.flashcardId,10);
+    const tag = req.body.tag.trim();
+    const correct = req.body.correct ? 1:0;
+
+    db.run(
+        `INSERT INTO quiz_attempts(user_id,flashcard_id,tag,correct)
+        VALUES(?,?,?,?)`,
+        [userId,flashcardId, tag,correct],
+        function(err) {
+            if (err) {
+                console.error(err);
+                return res.json({success: false});
+            }
+            res.json({success: true, id:this.lastID})
+        }
+    )
+})
+
+app.get('/overall_stats', (req,res) => {
+    const userId = parseInt(req.query.userId, 10)
+    if (!userId) return res.json({success:false, message: 'Invalid UserId'})
+    
+        db.get(`SELECT COUNT(*) AS attempts, SUM(correct) AS correct
+            FROM quiz_attempts WHERE user_id = ?`,
+        [userId],(err,row) => {
+            if (err) return res.json({ success:false});
+            const attempts = row?.attempts;
+            const correct = row?.correct;
+            const accuracy = attempts ? (correct/ attempts) * 100:
+
+            res.json({
+                success: true,
+                overall: {
+                    attempts: attempts,
+                    correct: correct,
+                    accuracy: accuracy}
+                });
+            }
+        );
 });
 
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));

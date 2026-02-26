@@ -422,11 +422,15 @@ function displayQuizCard() {
     const card = document.getElementById('FlashcardFace');
     const progress = document.getElementById('QuizProgress');
     const InputAnswer = document.getElementById('QuizAnswer');
-    const nextCardBtn = document.getElementById('Next_Flashcard')
+    const nextCardBtn = document.getElementById('Next_Flashcard');
+    const CorrectBtn = document.getElementById('Correct');
+    const IncorrectBtn = document.getElementById('Incorrect');
 
     if (!area || !card || !progress) return;
 
     if (quizIndex >= quizCards.length) {
+        if (CorrectBtn) {CorrectBtn.hidden = true;}
+        if (IncorrectBtn) {IncorrectBtn.hidden = true;}
         card.textContent = 'No remaining flashcards';
         progress.textContent = '';
         if (InputAnswer) {
@@ -452,7 +456,25 @@ function displayQuizCard() {
         }
         InputAnswer.disabled = false;
     }
+    if (CorrectBtn) {CorrectBtn.hidden = true;}
+    if (IncorrectBtn) {IncorrectBtn.hidden = true;}
 
+}
+
+function sendAttempt(correct) {
+    if (quizIndex >= quizCards.length) return;
+    const userId = localStorage.getItem('userId');
+    const currentCard = quizCards[quizIndex];
+
+    fetch ('/quiz_attempts', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ userId,
+            flashcardId: currentCard.id,
+            tag: currentCard.tag,
+            correct
+        })
+    })
 }
 
 const startQuizBtn = document.getElementById('StartQuiz');
@@ -502,6 +524,8 @@ if (flipFlashcard) {
         const card = document.getElementById('FlashcardFace');
         const currentCard = quizCards[quizIndex];
         const InputAnswer = document.getElementById('QuizAnswer')
+        const CorrectBtn = document.getElementById('Correct');
+        const IncorrectBtn = document.getElementById('Incorrect');
 
         if (showingQuestion) {
             card.textContent = currentCard.answer;
@@ -509,9 +533,14 @@ if (flipFlashcard) {
             if (InputAnswer) {
                 InputAnswer.disabled = true;
             }
-            if (nextCardBtn) {
-                nextCardBtn.hidden = false;
+            if (CorrectBtn) {
+                CorrectBtn.hidden = false;
             }
+            if (IncorrectBtn) {
+                IncorrectBtn.hidden = false;
+            }
+
+
         } else {
             card.textContent = currentCard.question;
             showingQuestion = true;
@@ -527,11 +556,47 @@ if (nextCard) {
     })
 }
 
+const CorrectBtn = document.getElementById('Correct');
+if (CorrectBtn) {
+    CorrectBtn.addEventListener('click', () => {
+        sendAttempt(true);
+
+        const IncorrectBtn = document.getElementById('Incorrect')
+        const nextCardBtn = document.getElementById('Next_Flashcard');
+
+        CorrectBtn.hidden = true
+        if (IncorrectBtn) IncorrectBtn.hidden = true;
+        if (nextCardBtn) nextCardBtn.hidden = false;
+
+    })
+}
+
+const IncorrectBtn = document.getElementById('Incorrect');
+if (IncorrectBtn) {
+    IncorrectBtn.addEventListener('click', () => {
+        sendAttempt(false);
+
+        const CorrectBtn = document.getElementById('Correct')
+        const nextCardBtn = document.getElementById('Next_Flashcard');
+
+        IncorrectBtn.hidden = true
+        if (CorrectBtn) CorrectBtn.hidden = true;
+        if (nextCardBtn) nextCardBtn.hidden = false;
+
+    })
+}
+
+function loadOverallStats() {
+    const Overall
+}
+
 //logout
 function logout() {
     localStorage.clear();
     window.location.href = '/Screens/Login Screen.html';
 }
+
+
 
 const logoutButton = document.getElementById('logout');
 if (logoutButton) {
