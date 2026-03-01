@@ -187,7 +187,7 @@ app.get('/overall_stats', (req,res) => {
             if (err) return res.json({ success:false});
             const attempts = row?.attempts;
             const correct = row?.correct;
-            const accuracy = attempts ? (correct/ attempts) * 100:
+            const accuracy = attempts ? (correct/ attempts) * 100: 0;
 
             res.json({
                 success: true,
