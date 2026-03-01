@@ -587,7 +587,21 @@ if (IncorrectBtn) {
 }
 
 function loadOverallStats() {
-    const Overall
+    const OverallStatsDisplay = document.getElementById('OverallStats');
+    if (!OverallStatsDisplay) return;
+
+    const userId = localStorage.getItem('userId');
+    if (!userId) { 
+        alert('Please log in to view stats.'); 
+        return;
+    }
+
+    fetch(`/overall_stats?userId=${encodeURIComponent(userId)}`)
+        .then (res => res.json())
+        .then (data => {
+            const { attempts, correct, accuracy } = data.overall;
+            OverallStatsDisplay.textContent = `Total Quiz Attempts: ${attempts}, Number of Times Correct: ${correct}, Accuracy: ${accuracy.toFixed(1)}%`;
+        })
 }
 
 //logout
@@ -595,8 +609,6 @@ function logout() {
     localStorage.clear();
     window.location.href = '/Screens/Login Screen.html';
 }
-
-
 
 const logoutButton = document.getElementById('logout');
 if (logoutButton) {

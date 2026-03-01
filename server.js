@@ -176,6 +176,7 @@ app.post('/quiz_attempts',(req,res) => {
     )
 })
 
+// Overall accuracy
 app.get('/overall_stats', (req,res) => {
     const userId = parseInt(req.query.userId, 10)
     if (!userId) return res.json({success:false, message: 'Invalid UserId'})
@@ -193,7 +194,7 @@ app.get('/overall_stats', (req,res) => {
                 overall: {
                     attempts: attempts,
                     correct: correct,
-                    accuracy: accuracy}
+                    accuracy: accuracy }
                 });
             }
         );
