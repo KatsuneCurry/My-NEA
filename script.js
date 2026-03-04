@@ -646,7 +646,7 @@ function loadTagStats() {
     return;
     }
 
-    fetch(`/tag_stats? userId = ${encodeURIComponent(userId)}`)
+    fetch(`/tag_stats?userId=${encodeURIComponent(userId)}`)
         .then(res => res.json())
         .then(data => {
             if (!data || !data.success) {
@@ -654,8 +654,8 @@ function loadTagStats() {
                 return;
             }
 
-            if (!Array.isArray(data.perTag) || !data.perTag.length ===0) {
-                list.innerHTML = '<liYou have not yet attempted any quiz.</li>';
+            if (!Array.isArray(data.perTag) || data.perTag.length === 0) {
+                list.innerHTML = '<li>You have not yet attempted any quiz.</li>';
                 return;
             }
 
