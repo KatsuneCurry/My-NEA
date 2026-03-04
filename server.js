@@ -200,4 +200,26 @@ app.get('/overall_stats', (req,res) => {
         );
 });
 
+//Tag specific accuracy
+app.get('/tag_stats', (req,res) => {
+    const userId = parseInt(req.query.userId,10)
+    if (!userId) return;
+
+    db.all(`SELECT tag,
+        COUNT(*) AS attempts,
+        SUM(correct) AS correct
+        FROM quiz_attempts WHERE user_id = ? `, [userId], (err,rows) => {if (err) return res.json({ success:false});
+        
+        const perTag = rows.map(row => {
+            const attempts = Number(row.attempts) || 0;
+            const correct = Number(row.correct) || 0;
+            const accuracy = attempts ? (correct/attempts) *100 :0;
+            return {tag: row.tag,attempts,correct,accuracy};
+        });
+
+        res.json({success: true, perTag});
+    }
+    );
+});
+
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));

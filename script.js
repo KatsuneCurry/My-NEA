@@ -639,6 +639,32 @@ function loadOverallStats() {
         })
 }
 
+function loadTagStats() {
+    const list = document.getElementById('TagStatsList');
+    const userId = localStorage.getItem('userId');
+    if (!userId) { list.innerHTML = '<li>Please log in to view stats.</li>'; 
+    return;
+    }
+
+    fetch(`/tag_stats? userId = ${encodeURIComponent(userId)}`)
+        .then(res => res.json())
+        .then(data => {
+            if (!data || !data.success) {
+                list.innerHTML = '<li>Failed to load Tag Stats</li>';
+                return;
+            }
+
+            if (!Array.isArray(data.perTag) || !data.perTag.length ===0) {
+                list.innerHTML = '<liYou have not yet attempted any quiz.</li>';
+                return;
+            }
+
+            list.innerHTML = data.perTag.map(row => `<li><strong>${row.tag}</strong>: Attempts: ${row.attempts}, Correct: ${row.correct}, Accuracy: ${row.accuracy.toFixed(1)}%</li>`)
+            .join('');
+        })
+        .catch(() => {list.innerHTML = '<li>Error Loading Stats.</li>';});
+}
+
 //logout
 function logout() {
     localStorage.clear();
