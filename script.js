@@ -417,6 +417,11 @@ let quizCards = [];
 let quizIndex = 0;
 let showingQuestion = true;
 
+const resetQuizBtn = document.getElementById('ResetQuiz');
+if (resetQuizBtn) { resetQuizBtn.addEventListener('click', () => {resetQuiz();}
+);
+}
+
 function displayQuizCard() {
     const area = document.getElementById('FlashcardArea');
     const card = document.getElementById('FlashcardFace');
@@ -584,6 +589,36 @@ if (IncorrectBtn) {
         if (nextCardBtn) nextCardBtn.hidden = false;
 
     })
+}
+
+
+function resetQuiz() {
+    const area = document.getElementById('FlashcardArea');
+    const tagselectionsection = document.getElementById('TagSelectionSection');
+    const card = document.getElementById('FlashcardFace');
+    const progress = document.getElementById('QuizProgress');
+    const InputAnswer = document.getElementById('QuizAnswer');
+    const nextCardBtn = document.getElementById('Next_Flashcard');
+    const CorrectBtn = document.getElementById('Correct');
+    const IncorrectBtn = document.getElementById('Incorrect');
+
+    quizCards = [];
+    quizIndex = 0;
+    showingQuestion = true;
+
+    area.hidden = true;
+    tagselectionsection.hidden = false;
+    card.textContent = '';
+    progress.textContent = '';
+    InputAnswer.value = '';
+    InputAnswer.disabled = false;
+    nextCardBtn.hidden = true;
+    CorrectBtn.hidden = true;
+    IncorrectBtn.hidden = true;
+
+    localStorage.removeItem('quizTags');
+    document.querySelectorAll('input[name = "quiz_tags"]:checked')
+    .forEach(cb => cb.checked = false);
 }
 
 function loadOverallStats() {
