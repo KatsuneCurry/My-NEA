@@ -665,6 +665,24 @@ function loadTagStats() {
         .catch(() => {list.innerHTML = '<li>Error Loading Stats.</li>';});
 }
 
+//recommend tag
+function recommendTag() {
+    const userId = localStorage.getItem('userId');
+    const recomendedTag = document.getElementById('recommendedTag')
+    fetch(`/recommend_tag?userId=${encodeURIComponent(userId)}`)
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) {alert(data.message || 'No attempts found');
+                return;
+            }
+            recomendedTag.textContent = `Recommended Tag for Quizzing: ${data.tag}`;
+        })
+        .catch(err => {
+            console.error(err);
+            recomendedTag.textContent= 'Error with Loading Recommended Tag'
+        })
+}
+
 //logout
 function logout() {
     localStorage.clear();

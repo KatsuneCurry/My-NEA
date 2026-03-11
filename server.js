@@ -214,7 +214,7 @@ app.get('/tag_stats', (req,res) => {
         const perTag = rows.map(row => {
             const attempts = Number(row.attempts) || 0;
             const correct = Number(row.correct) || 0;
-            const accuracy = attempts ? (correct/attempts) *100 : 0;
+            const accuracy = attempts ? (correct/attempts) * 100 : 0;
             return {tag: row.tag,attempts,correct,accuracy};
         });
 
@@ -222,5 +222,35 @@ app.get('/tag_stats', (req,res) => {
     }
     );
 });
+
+//recommend tag
+app.get('/recommend_tag', (req,res) => {
+    const userId = parseInt(req.query.userId,10);
+    if (!userId) {
+        return res.json({success:false, message: 'Invalid UserId'});
+    }
+
+    db.get(
+        `SELECT flashcard_id, tag, created
+        FROM quiz_attempts
+        WHERE user_id = ?
+        ORDER BY created ASC
+        LIMIT 1`,[userId],(err,row) =>{
+            if (err) {
+                console.error(err)
+                return res.json({success:false})
+            }
+            if (!row) {
+                return res.json({success: false, message:'No attempts were found'})
+            }
+            res.json({
+                success:true,
+                tag: row.tag,
+                created: row.created
+            })
+        }
+        
+    )
+})
 
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));
