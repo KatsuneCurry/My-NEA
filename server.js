@@ -254,4 +254,67 @@ app.get('/recommend_tag', (req,res) => {
     )
 })
 
+//hours spent statistics
+db.run(`CREATE TABLE IF NOT EXISTS quiz_sessions (
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    duration INTEGER NOT NULL,
+    created TEXT DEFAULT CURRENT_TIMESTAMP)`);
+
+app.post('/quiz_time', (req,res) => {
+    const userId = parseInt(req.body.userId,10);
+    const duration = parseInt(req.body.duration,10);
+
+    if (!userId || !duration) {
+        return res.json({ success: false, message: 'Invalid data'});
+    }
+
+    db.run(
+        `INSERT INTO quiz_sessions (user_id, duration)
+        VALUES (?,?)`, [userId, duration],
+        function (err) {
+            if (err) {
+                console.error(err);
+                return res.json({success: false});
+            }
+            res.json({success:true});
+        }
+    );
+});
+
+app.get('/week_durations', (req,res) => {
+    const userId = parseInt(req.query.userId,10);
+    if (!userId) {
+        return res.json({success:false, message: 'Invalid UserId'});
+    }
+
+    const now = new Date();
+    const day = now.getDay();
+    const ToMonday = day === 0 ? 6 : day - 1;
+
+    const StartMonday = new Date(now);
+    StartMonday.setDate(now.getDate() - ToMonday);
+    StartMonday.setHours(0,0,0,0);
+
+    db.get(
+        `SELECT SUM(duration) AS total_duration
+        FROM quiz_sessions
+        WHERE user_id =  ?
+        AND created >= ?`,
+        [userId,StartMonday.toISOString()],
+        (err,row) => {
+            if (err) {
+                console.error(err);
+                return res.json({success:false});
+            }
+
+            const total_duration =row?.total_duration || 0;
+            res.json({
+                success: true,
+                total_duration
+            });
+        }
+    )
+});
+
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));

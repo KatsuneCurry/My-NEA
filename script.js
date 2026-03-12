@@ -434,6 +434,7 @@ function displayQuizCard() {
     if (!area || !card || !progress) return;
 
     if (quizIndex >= quizCards.length) {
+        SaveTime();
         if (CorrectBtn) {CorrectBtn.hidden = true;}
         if (IncorrectBtn) {IncorrectBtn.hidden = true;}
         card.textContent = 'No remaining flashcards';
@@ -512,6 +513,7 @@ if (startQuizBtn) {
                     if (tagselectionsection) {tagselectionsection.hidden = true;}
 
                quizIndex = 0;
+               StartTimer();
                displayQuizCard();
            })
            .catch(err => {
@@ -593,6 +595,7 @@ if (IncorrectBtn) {
 
 
 function resetQuiz() {
+    SaveTime();
     const area = document.getElementById('FlashcardArea');
     const tagselectionsection = document.getElementById('TagSelectionSection');
     const card = document.getElementById('FlashcardFace');
@@ -675,13 +678,77 @@ function recommendTag() {
             if (!data.success) {alert(data.message || 'No attempts found');
                 return;
             }
-            recomendedTag.textContent = `Recommended Tag for Quizzing: ${data.tag}`;
+            const last_answered = new Date(data.created);
+            const now = new Date();
+            const diff = now - last_answered;
+            const diffdays = Math.trunc(diff / 86400000);
+            const diffhours = Math.trunc(diff / 3600000);
+            let time = '';
+            if (diffdays >=1) {
+                time = `${diffdays} day(s) ago`;
+            }
+            else {
+                time = `${diffhours} hour(s) ago`;
+            }
+
+            recomendedTag.textContent = `Recommended Tag for Quizzing: ${data.tag}, This was last answered ${time}`;
         })
         .catch(err => {
             console.error(err);
             recomendedTag.textContent= 'Error with Loading Recommended Tag'
         })
 }
+
+//Session timers
+let quizStart = null;
+function StartTimer() {
+    quizStart = Date.now()
+}
+
+function SaveTime() {
+    if (!quizStart) return;
+    const userId = localStorage.getItem('userId');
+    const duration = Math.trunc((Date.now() - quizStart) / 1000)
+
+    fetch('/quiz_time', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({userId, duration})
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) {
+                console.error('Failed to save')
+            }
+        })
+        .catch(err => {
+            console.error('Error saving times')
+        });
+    quizStart = null;
+}
+
+function loadWeekTime() {
+    const WeeklyTime = document.getElementById('WeeklyTime');
+    if (!WeeklyTime) return;
+    const userId = localStorage.getItem('userId');
+    if (!userId) return;
+
+    fetch(`/week_durations?userId=${encodeURIComponent(userId)}`)
+    .then(res => res.json())
+    .then(data => {
+        if (!data.success) {
+        WeeklyTime.textContent = data.message || 'Failed to load';
+        return;
+        }
+         const Durationhours = (data.total_duration / 3600);
+         WeeklyTime.textContent = `Time spent revising this week: ${Durationhours.toFixed(2)} hour(s)`;
+    })
+    .catch(err => {
+        console.error(err);
+        WeeklyTime.textContent = 'Error Loading.'
+    })
+}
+
 
 //logout
 function logout() {
@@ -693,3 +760,4 @@ const logoutButton = document.getElementById('logout');
 if (logoutButton) {
     logoutButton.addEventListener('click', logout);
 }
+
