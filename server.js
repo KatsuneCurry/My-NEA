@@ -231,10 +231,11 @@ app.get('/recommend_tag', (req,res) => {
     }
 
     db.get(
-        `SELECT flashcard_id, tag, created
+        `SELECT tag, MAX(created) AS last_answered
         FROM quiz_attempts
         WHERE user_id = ?
-        ORDER BY created ASC
+        GROUP BY tag
+        ORDER BY last_answered ASC
         LIMIT 1`,[userId],(err,row) =>{
             if (err) {
                 console.error(err)
@@ -246,7 +247,7 @@ app.get('/recommend_tag', (req,res) => {
             res.json({
                 success:true,
                 tag: row.tag,
-                created: row.created
+                created: row.last_answered
             })
         }
         
