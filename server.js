@@ -317,4 +317,46 @@ app.get('/week_durations', (req,res) => {
     )
 });
 
+// Class System
+db.run(`CREATE TABLE IF NOT EXISTS classes (
+    id INTEGER PRIMARY KEY,
+    teacher_id INTEGER NOT NULL,
+    class_name TEXT NOT NULL
+    class_code TEXT NOT NULL UNIQUE)`);
+
+db.run(`CREATE TABLE IF NOT EXISTS class_members (
+    id INTEGER PRIMARY KEY,
+    class_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    UNIQUE(class_id,user_id)`);
+
+function randomiseClassCode(){
+    return Math.random().toString(36).slice(2,6).toUpperCase();
+}
+
+app.post('/classes', (req,res) => {
+    const teacher_id = parseInt(req.body.userId,10);
+    const className = String(req.body.className || '').trim();
+
+    if (!teacher_id || !className) {
+        return res.json({sucess:false, message: 'Missing Data'})
+    }
+
+    ClassCode = randomiseClassCode();
+
+    db.run(
+        `INSERT INTO classes (teacher_id, className, ClassCode) VALUES (?, ?, ?)`,
+        [teacher_id,className,ClassCode],
+        function (err) {
+            if (err) {
+                console.error(err);
+                return res.json({success:false});
+            }
+            res.json({
+                success: true, classId: this.lastID, ClassCode
+            });
+        }
+    );
+});
+
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));
