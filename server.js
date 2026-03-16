@@ -292,7 +292,7 @@ app.get('/week_durations', (req,res) => {
     const day = now.getDay();
     const ToMonday = day === 0 ? 6 : day - 1;
 
-    const StartMonday = new Date(now);
+    const StartMonday = new Date();
     StartMonday.setDate(now.getDate() - ToMonday);
     StartMonday.setHours(0,0,0,0);
 
