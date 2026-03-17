@@ -321,14 +321,14 @@ app.get('/week_durations', (req,res) => {
 db.run(`CREATE TABLE IF NOT EXISTS classes (
     id INTEGER PRIMARY KEY,
     teacher_id INTEGER NOT NULL,
-    class_name TEXT NOT NULL
+    class_name TEXT NOT NULL,
     class_code TEXT NOT NULL UNIQUE)`);
 
 db.run(`CREATE TABLE IF NOT EXISTS class_members (
     id INTEGER PRIMARY KEY,
     class_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    UNIQUE(class_id,user_id)`);
+    UNIQUE(class_id,user_id))`);
 
 function randomiseClassCode(){
     return Math.random().toString(36).slice(2,6).toUpperCase();
@@ -339,24 +339,129 @@ app.post('/classes', (req,res) => {
     const className = String(req.body.className || '').trim();
 
     if (!teacher_id || !className) {
-        return res.json({sucess:false, message: 'Missing Data'})
+        return res.json({success:false, message: 'Missing Data'})
     }
 
-    ClassCode = randomiseClassCode();
+    const classCode = randomiseClassCode();
 
     db.run(
-        `INSERT INTO classes (teacher_id, className, ClassCode) VALUES (?, ?, ?)`,
-        [teacher_id,className,ClassCode],
+        `INSERT INTO classes (teacher_id, class_name, class_code) VALUES (?, ?, ?)`,
+        [teacher_id,className,classCode],
         function (err) {
             if (err) {
                 console.error(err);
-                return res.json({success:false});
+                return res.json({success:false, message: 'Error with creating class, please try again.'});
             }
             res.json({
-                success: true, classId: this.lastID, ClassCode
+                success: true, classId: this.lastID, classCode
             });
         }
     );
 });
 
+app.post('/classes/join', (req, res) => {
+    const userId = parseInt(req.body.userId, 10);
+    const classCode = String(req.body.classCode || '').trim().toUpperCase();
+
+    if (!userId || !classCode) {
+        return res.json({ success: false, message: 'Missing data' });
+    }
+
+    db.get(
+        `SELECT id, class_name, class_code 
+        FROM classes 
+        WHERE class_code = ?`,
+        [classCode],
+        (err, classRow) => {
+            if (err) {
+                console.error(err);
+                return res.json({success: false });
+            }
+
+            if (!classRow) {
+                return res.json({ success: false, message: 'Class not found' });
+            }
+
+            db.run(
+                `INSERT INTO class_members (class_id, user_id) VALUES (?, ?)`,
+                [classRow.id, userId],
+                function (err) {
+                    if (err) {
+                        console.error(err);
+                        return res.json({ success: false, message: 'Invalid data' });
+                    }
+
+                    res.json({
+                        success: true,
+                        className: classRow.class_name,
+                        classCode: classRow.class_code
+                    });
+                });
+        });
+});
+
+app.get('/classes/:id/students', (req, res) => {
+    const classId = parseInt(req.params.id, 10);
+    const teacherId = parseInt(req.query.userId, 10);
+
+    if (!classId || !teacherId) {
+        return res.json({ success: false, message: 'Invalid data' });
+    }
+
+    db.get(
+        `SELECT id FROM classes WHERE id = ? AND teacher_id = ?`,
+        [classId, teacherId],
+        (err, classRow) => {
+            if (err) {
+                console.error(err);
+                return res.json({ success: false });
+            }
+
+            if (!classRow) {
+                return res.json({ success: false, message: 'Not allowed' });
+            }
+
+            db.all(
+                `SELECT users.username, SUM(quiz_sessions.duration) AS total_seconds
+                 FROM class_members
+                 JOIN users ON users.id = class_members.user_id
+                 JOIN quiz_sessions ON quiz_sessions.user_id = users.id
+                 WHERE class_members.class_id = ?
+                 GROUP BY users.id
+                 ORDER BY users.username ASC`,
+                [classId],
+                (err, rows) => {
+                    if (err) {
+                        console.error(err);
+                        return res.json({ success: false });
+                    }
+
+                    res.json({ success: true, students: rows });
+                });
+        });
+});
+
+app.get('/classes/mine', (req, res) => {
+    const teacherId = parseInt(req.query.userId, 10);
+
+    if (!teacherId) {
+        return res.json({ success: false, message: 'Invalid userId' });
+    }
+
+    db.all(
+        `SELECT id, class_name, class_code
+         FROM classes
+         WHERE teacher_id = ?
+         ORDER BY class_name ASC`,
+        [teacherId],
+        (err, rows) => {
+            if (err) {
+                console.error(err);
+                return res.json({ success: false });
+            }
+
+            res.json({ success: true, classes: rows });
+        }
+    );
+});
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));

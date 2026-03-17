@@ -749,6 +749,145 @@ function loadWeekTime() {
     })
 }
 
+//Class system functions
+
+function createClass() {
+    const userId = localStorage.getItem('userId');
+    const classNameInput = document.getElementById('ClassNameInput');
+    const message = document.getElementById('CreateClassMessage');
+
+    if (!classNameInput || !message) return;
+
+    const className = classNameInput.value.trim();
+
+    if (!className) {
+        message.textContent = 'Enter a class name.';
+        return;
+    }
+
+    fetch('/classes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, className })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (!data.success) {
+            message.textContent = data.message || 'Failed to create class.';
+            return;
+        }
+
+        message.textContent = `Class created. Code: ${data.classCode}`;
+        classNameInput.value = '';
+    })
+    .catch(err => {
+        console.error(err);
+        message.textContent = 'Network error.';
+    });
+}
+
+function joinClass() {
+    const userId = localStorage.getItem('userId');
+    const classCodeInput = document.getElementById('JoinClassCodeInput');
+    const message = document.getElementById('JoinClassMessage');
+
+    if (!classCodeInput || !message) return;
+
+    const classCode = classCodeInput.value.trim().toUpperCase();
+
+    if (!classCode) {
+        message.textContent = 'Enter a class code.';
+        return;
+    }
+
+    fetch('/classes/join', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, classCode })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (!data.success) {
+            message.textContent = data.message || 'Failed to join class.';
+            return;
+        }
+
+        message.textContent = `Joined ${data.className}`;
+        classCodeInput.value = '';
+    })
+    .catch(err => {
+        console.error(err);
+        message.textContent = 'Network error.';
+    });
+}
+
+function loadClassStudents(classId) {
+    const userId = localStorage.getItem('userId');
+    const list = document.getElementById('ClassStudentsList');
+
+    if (!list) return;
+
+    fetch(`/classes/${encodeURIComponent(classId)}/students?userId=${encodeURIComponent(userId)}`)
+    .then(res => res.json())
+    .then(data => {
+        if (!data.success || !data.students || data.students.length === 0) {
+            list.innerHTML = '<li>No students found.</li>';
+            return;
+        }
+
+        list.innerHTML = data.students.map(student => {
+            const hours = ((student.total_seconds || 0) / 3600).toFixed(2);
+            return `<li>${student.username} - ${hours} hours</li>`;
+        }).join('');
+    })
+    .catch(err => {
+        console.error(err);
+        list.innerHTML = '<li>Failed to load students.</li>';
+    });
+}
+
+function loadTeacherClass() {
+    const userId = localStorage.getItem('userId');
+    const info = document.getElementById('TeacherClassInfo');
+    const list = document.getElementById('ClassStudentsList');
+
+    if (!info || !list) return;
+
+    fetch(`/classes/mine?userId=${encodeURIComponent(userId)}`)
+    .then(res => res.json())
+    .then(data => {
+        if (!data.success || !data.classes || data.classes.length === 0) {
+            info.textContent = 'No class created yet.';
+            list.innerHTML = '<li>No students found.</li>';
+            return;
+        }
+
+        const classItem = data.classes[0];
+        info.textContent = `${classItem.class_name} (Code: ${classItem.class_code})`;
+        loadClassStudents(classItem.id);
+    })
+    .catch(err => {
+        console.error(err);
+        info.textContent = 'Failed to load class.';
+        list.innerHTML = '<li>Failed to load students.</li>';
+    });
+}
+
+function ClassPage() {
+    const createBtn = document.getElementById('CreateClassBtn');
+    const joinBtn = document.getElementById('JoinClassBtn');
+
+    if (createBtn) {
+        createBtn.addEventListener('click', createClass);
+    }
+
+    if (joinBtn) {
+        joinBtn.addEventListener('click', joinClass);
+    }
+
+    loadTeacherClass();
+}
+
 
 //logout
 function logout() {

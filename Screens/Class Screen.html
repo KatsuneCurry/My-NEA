@@ -8,10 +8,25 @@
 <body>
     <button id="RevisaidHome">Revisaid</button>
     <h1>Class Screen</h1>
-    <p>Class!</p>
+    <h2>Create Class</h2>
+    <input id="ClassNameInput" type="text" placeholder="Class name">
+    <button id="CreateClassBtn" type="button">Create</button>
+    <p id="CreateClassMessage"></p>
+
+    <h2>Join Class</h2>
+    <input id="JoinClassCodeInput" type="text" placeholder="Class code">
+    <button id="JoinClassBtn" type="button">Join</button>
+    <p id="JoinClassMessage"></p>
+
+    <h2>Your Class</h2>
+    <p id="TeacherClassInfo">Loading...</p>
+
+    <h2>Students</h2>
+    <ul id="ClassStudentsList"><li>Loading...</li></ul>
     <script src="../script.js"></script>
     <script>
       ensureLoggedin();
+      ClassPage();
     </script>
 
     
