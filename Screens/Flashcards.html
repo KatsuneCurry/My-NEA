@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
+    <main class="vertical">
     <button id="RevisaidHome">Revisaid</button>
     <h1>Flashcards Screen</h1>
 
@@ -17,10 +18,10 @@
 
     <section id="CreateFlashcards" hidden>
         <h2> Create Flashcards</h2>
-     <form id="flashcard_form">
+     <form id="flashcard_form" class="vertical_form">
          <input id="card_question" placeholder="Question (front)" required>
          <input id="card_answer" placeholder="answer (back)" required>
-            <input id="card_tag" placeholder="tag (required)">
+         <input id="card_tag" placeholder="tag (required)">
          <button type="submit">Create Card</button>
       </form>
     </section>
@@ -42,7 +43,7 @@
         <ul id="manage_flashcard_list"></ul>
 
     </section>
-
+    </main>
     <script src="../script.js"></script>
     <script>
       ensureLoggedin();

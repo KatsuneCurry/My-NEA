@@ -160,6 +160,11 @@ form.addEventListener('submit', (e) => {e.preventDefault();
     const answer = document.getElementById('card_answer').value;
     const tag = document.getElementById('card_tag').value;
     
+    if (!question || !answer || !tag) {
+        alert("Please fill out all empty fields")
+        return;
+    }
+
     const userId = localStorage.getItem('userId');
 
     fetch('/flashcards', {
@@ -265,7 +270,7 @@ function QuizTagSelect(tagListId = 'TagList') {
             );
 
             if (tags.length === 0) {
-                taglist.textContent = 'No tags found. Add tags to flashcards first.';
+                taglist.textContent = 'No tags found, create flashcards first.';
                 return;
             }
 
@@ -892,6 +897,7 @@ function ClassPage() {
 //logout
 function logout() {
     localStorage.clear();
+    alert('Successfully logged out.');
     window.location.href = '/Screens/Login Screen.html';
 }
 
@@ -899,4 +905,3 @@ const logoutButton = document.getElementById('logout');
 if (logoutButton) {
     logoutButton.addEventListener('click', logout);
 }
-
